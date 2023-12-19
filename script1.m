@@ -7,15 +7,13 @@ genres = getGenres(movies); % teste values genres
 titles = getTitles(movies); % teste values titles
 years = getYear(movies); % teste values years
 
-BF = init(length(genres)-1);
+BF = init(length(genres)*8);
 
 for i = 1:height(movies)
     for j=3:12
         BF = insert(movies{i, j}, BF, k);
     end
 end
-
-
 
 save data.mat genres BF
 
@@ -74,21 +72,7 @@ function BF = insert(elemento, BF, k)
         end
 end
 
-function check = valid(elemento, BF, k)
-    n = length(BF);
-    check = true;
-    for i = 1:k
-        elemento = [elemento num2str(i)];
-        h = DJB31MA(elemento, 127);
-        h = mod(h,n) + 1; %para dar valor entre 1 e n para por no BF
-        if ~BF(h)
-            check = false;
-            break;
-        end
-    end
-end
-
-
+    
 function h= DJB31MA( chave, seed)
     len= length(chave);
     chave= double(chave);

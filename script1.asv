@@ -1,13 +1,13 @@
 clear;
 clc;
-k=3;
+k=1;
 movies = readcell('movies.csv', 'Delimiter', ',');
 
 genres = getGenres(movies); % teste values genres
 titles = getTitles(movies); % teste values titles
 years = getYear(movies); % teste values years
 
-BF = init(length(genres));
+BF = init(length(genres)-1);
 
 for i = 1:height(movies)
     for j=3:12
@@ -15,15 +15,7 @@ for i = 1:height(movies)
     end
 end
 
-
-
-
-
-
-
-
-
-
+check=valid(movies{2,5},BF)
 
 
 
@@ -68,18 +60,19 @@ end
 
 %BF funtions
 function BF = init(n)
-    BF = false(1,n);
+    BF = zeros(1,n);
 end
 
 
 function BF = insert(elemento, BF, k)
     n = length(BF);
         for i = 1:k
-            if ~ismissing
-            elemento = [elemento num2str(i)];
-            h = DJB31MA(elemento, 127);
-            h = mod(h,n) + 1; %para dar valor entre 1 e n para por no BF
-            BF(h) = true;
+            if ~ismissing(elemento)
+                elemento = [elemento num2str(i)];
+                h = DJB31MA(elemento, 127);
+                h = mod(h,n) + 1; %para dar valor entre 1 e n para por no BF
+                BF(h) = BF(h)+1;
+            end
         end
 end
 

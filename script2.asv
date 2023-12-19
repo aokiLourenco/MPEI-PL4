@@ -22,9 +22,9 @@ function interface(genres,BF)
 
             case 2
                 genre = input("Select a genre:","s");
-                check=min(valid(genre,BF,3));
-                fprintf("Movies of '%s' genre: %d\n",genre,check)
 
+                check=valid(genre,BF,3);
+                check=min(check);
             case 3
                 genre_year = input("Select a genre and a year (separated by ','):","s");
                 values = strsplit(genre_year, ',');
@@ -58,16 +58,5 @@ function check = valid(elemento, BF, k)
         else
             check(i) = 0;
         end
-    end
-end
-
-
-    
-function h= DJB31MA( chave, seed)
-    len= length(chave);
-    chave= double(chave);
-    h= seed;
-    for i=1:len
-        h = mod(31 * h + chave(i), 2^32 -1) ;
     end
 end
