@@ -1,18 +1,22 @@
-clear all;
+clear;
 clc;
 
 movies = readcell('movies.csv', 'Delimiter', ',');
 
 genres = getGenres(movies); % teste values genres
 titles = getTitles(movies); % teste values titles
-year = getYear(movies)
+years = getYear(movies); % teste values years
+
+
+save data.mat genres
+
 
 function genres = getGenres(movies)
     genres = {};
     k = 1;
 
     for i = 1:height(movies)
-        for j = 3:7
+        for j = 3:12
             if ~anymissing(movies{i, j}) && ~strcmp(movies{i, j}, 'unkown')
                 genres{k} = movies{i, j};
                 k = k + 1;
@@ -42,3 +46,4 @@ function year = getYear(movies)
         k = k + 1;
     end
 end
+

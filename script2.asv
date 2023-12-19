@@ -5,7 +5,7 @@ interface(genres);
 %% INTERFACE
 function interface(genres)
     while(1)
-        option = input(['\n1 - Display available genres' ...
+        option = input(['1 - Display available genres' ...
                         '\n2 - Number of movies of a genre' ...
                         '\n3 - Number of movies of a genre on a given year' ...
                         '\n4 - Search movie titles' ...
@@ -15,9 +15,8 @@ function interface(genres)
     
         switch option
             case 1
-                fprintf("Available genres:\n")
-                for i = 2:length(genres)
-                    fprintf("%s, ", genres{i});
+                for i = 1:length(genres)
+                    fprintf("%s", genres{i});
                 end
 
             case 2
