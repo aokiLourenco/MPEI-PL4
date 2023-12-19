@@ -7,13 +7,23 @@ genres = getGenres(movies); % teste values genres
 titles = getTitles(movies); % teste values titles
 years = getYear(movies); % teste values years
 
-BF = init(length(genres)-1);
+BF = init(length(genres));
 
 for i = 1:height(movies)
     for j=3:12
         BF = insert(movies{i, j}, BF, k);
     end
 end
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -58,19 +68,18 @@ end
 
 %BF funtions
 function BF = init(n)
-    BF = zeros(1,n);
+    BF = false(1,n);
 end
 
 
 function BF = insert(elemento, BF, k)
     n = length(BF);
         for i = 1:k
-            if ~ismissing(elemento)
-                elemento = [elemento num2str(i)];
-                h = DJB31MA(elemento, 127);
-                h = mod(h,n) + 1; %para dar valor entre 1 e n para por no BF
-                BF(h) = BF(h)+1;
-            end
+            if ~ismissing
+            elemento = [elemento num2str(i)];
+            h = DJB31MA(elemento, 127);
+            h = mod(h,n) + 1; %para dar valor entre 1 e n para por no BF
+            BF(h) = true;
         end
 end
 
