@@ -32,7 +32,7 @@ numTitles = length(titles);
 numHash = 100;
 shingleSize = 3; 
 matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize);
-distancesTitles = getDistancesMinHashTitles(numTitles,matrizMinHashTitles,numHash);
+[top5Titles, top5Distances] = getTop5SimilarTitles(numTitles, matrizMinHashTitles, numHash, 1);
 %==============================================================
 
 
@@ -47,7 +47,7 @@ distancesGenres = getDistancesMinHashGenres(numFilms,matrizMinHashGenres,numHash
 
 
 %==========================Save in data========================
-save data.mat genres BF BF_years years matrizMinHashGenres distancesGenres matrizMinHashTitles distancesTitles
+save data.mat genres BF BF_years years matrizMinHashGenres distancesGenres matrizMinHashTitles top5Titles top5Distances
 %==============================================================
 
 
@@ -120,7 +120,7 @@ end
 %================================================================
 
 
-%==========================MinHash==========================
+%========================MinHash Titles==========================
 function matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize)
     numTitles = length(titles);
     matrizMinHashTitles = inf(numTitles, numHash);
@@ -142,15 +142,38 @@ function matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize)
     delete(x);
 end
 
-function distances = getDistancesMinHashTitles(numTitles,matrizMinHash,numHash) 
-    distances = zeros(numTitles,numTitles);
-    for n1= 1:numTitles
-        for n2= n1+1:numTitles
-            distances(n1,n2) = sum(matrizMinHash(n1,:)==matrizMinHash(n2,:))/numHash;
+% function distances = getDistancesMinHashTitles(numTitles,matrizMinHash,numHash) 
+%     distances = zeros(numTitles,numTitles);
+%     for n1= 1:numTitles
+%         for n2= n1+1:numTitles
+%             distances(n1,n2) = sum(matrizMinHash(n1,:)==matrizMinHash(n2,:))/numHash;
+%         end
+%     end
+% end
+
+function [top5Titles, top5Distances] = getTop5SimilarTitles(numTitles, matrizMinHash, numHash, searchTitleIndex)
+    top5Distances = zeros(1, 5);
+    top5Titles = zeros(1, 5);
+    
+    for n = 1:numTitles
+        if n == searchTitleIndex
+            continue;
+        end
+        
+        distance = sum(matrizMinHash(searchTitleIndex,:) == matrizMinHash(n,:)) / numHash;
+        
+        if distance > min(top5Distances)
+            [~, minIndex] = min(top5Distances);
+            
+            top5Distances(minIndex) = distance;
+            top5Titles(minIndex) = n;
         end
     end
 end
+%================================================================
 
+
+%========================MinHash Genres==========================
 function matrizAss = matrizAss(dic,genres)
     numFilms = height(dic);
     numGenres = length(genres);
@@ -190,3 +213,4 @@ function distances = getDistancesMinHashGenres(numFilms,matrizMinHash,numHash)
         end
     end
 end
+%================================================================

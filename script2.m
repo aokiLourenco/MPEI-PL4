@@ -153,10 +153,12 @@ function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize, 
     
     distances = cell2mat(distancesTitles);
     [distances, index] = sort(distances);
-    
+
+    % for each movie appear the genres of it
     for h = 1 : k
-        fprintf('%s - Similarity: %.3f\n%s', similarTitles{index(h)}, distances(h));
+        fprintf('%s - Similarity: %.3f\n%s', similarTitles{index(h)}, distances(h), genres{index(h)});
         fprintf("\n==========================\n\n")
+
     end
 end
 
