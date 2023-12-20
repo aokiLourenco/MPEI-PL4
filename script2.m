@@ -1,5 +1,6 @@
 %% MAIN
 load data.mat
+movies = readcell('movies.csv', 'Delimiter', ',');
 %interface(genres,BF,BF_years,years,matrixMinHashTitles,numHash,titles,shingleSize);
 %searchTitle(matrixMinHashTitles, numHash, titles, shingleSize)
 %filterSimilar(titles,matrixMinHashTitles,minHash_search,numHash)
@@ -74,7 +75,7 @@ while(1)
                 search = lower(input("Insert a string: ","s"));
             end
 
-            searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
+            searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize,movies)
 
         case 5
             selectedGenres = input("Select one or more genres (separated by ','): ","s");
@@ -130,7 +131,7 @@ function check = valid2(elemento, ano, BF, k)
     end
 end
 
-function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
+function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize,movies)
     minHashSearch = inf(1, numHash);
     for j = 1 : (length(search) - shingleSize + 1)
         shingle = char(search(j:(j+shingleSize-1))); 
@@ -155,7 +156,13 @@ function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
     [distances, index] = sort(distances);
     
     for h = 1 : k
-        fprintf('%s - Similarity: %.3f\n', similarTitles{index(h)}, 1-distances(h));
+        fprintf('\n%s - Similarity: %.3f\n', similarTitles{index(h)}, 1-distances(h));
+        index2 = movie_index(titles,similarTitles{index(h)});
+        genres_of_movie=movie_genres(index2,movies);
+        fprintf("Genres: ");
+        for p = 1:length(genres_of_movie)
+            fprintf("%s  ",genres_of_movie{p});
+        end
     end
 end
 
@@ -179,6 +186,23 @@ function [similarTitles,distancesTitles,k] = filterSimilar(threshold,titles,matr
             k = k+1;
             similarTitles{k} = titles{n};
             distancesTitles{k} = distancia;
+        end
+    end
+end
+
+
+function index = movie_index (titles,movie)
+    for x = 1:length(titles)
+        if strcmp(movie, titles{x})
+            index = x;
+        end
+    end
+end
+
+function genres = movie_genres (index,movies)
+    for j = 3:12
+        if ~ismissing(movies{index,j})
+            genres{j-2}=movies{index,j}; 
         end
     end
 end
