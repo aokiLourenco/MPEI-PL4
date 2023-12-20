@@ -1,6 +1,6 @@
 clear;
 clc;
-k=3;
+k=6;
 movies = readcell('movies.csv', 'Delimiter', ',');
 
 genres = getGenres(movies); % teste values genres
@@ -9,13 +9,16 @@ years = getYear(movies); % teste values years
 
 BF = init(length(genres)*8);
 
+BF_years = init(length(genres)*length(years)*8);
+
 for i = 1:height(movies)
     for j=3:12
         BF = insert(movies{i, j}, BF, k);
+        BF_years = insert2(movies{i,j},BF_years,k,movies{i,2});
     end
 end
 
-save data.mat genres BF
+save data.mat genres BF BF_years years
 
 
 function genres = getGenres(movies)
@@ -45,13 +48,13 @@ function titles = getTitles(movies)
 end
 
 function year = getYear(movies)
-    year = {};
     k = 1;
 
     for i = 1:height(movies)
-        year{k} = movies{i, 2};
+        year2(k) = movies{i, 2};
         k = k + 1;
     end
+    year = unique (year2) ;
 end
 
 %BF funtions
@@ -65,6 +68,18 @@ function BF = insert(elemento, BF, k)
         for i = 1:k
             if ~ismissing(elemento)
                 elemento = [elemento num2str(i)];
+                h = DJB31MA(elemento, 127);
+                h = mod(h,n) + 1; %para dar valor entre 1 e n para por no BF
+                BF(h) = BF(h)+1;
+            end
+        end
+end
+
+function BF = insert2(elemento, BF, k, ano)
+    n = length(BF);
+        for i = 1:k
+            if ~ismissing(elemento)
+                elemento = [num2str(ano) elemento num2str(i)];
                 h = DJB31MA(elemento, 127);
                 h = mod(h,n) + 1; %para dar valor entre 1 e n para por no BF
                 BF(h) = BF(h)+1;
