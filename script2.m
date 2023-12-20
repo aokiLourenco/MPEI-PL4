@@ -2,6 +2,8 @@
 load data.mat
 interface(genres,BF,BF_years,years);
 
+clc;
+
 %% INTERFACE
 function interface(genres,BF,BF_years,years)
     while(1)
@@ -67,19 +69,21 @@ function interface(genres,BF,BF_years,years)
 
 
             case 4
-                search = lower("Insert a string: ","s");
+                search = lower(input("Insert a string: ","s"));
 
                 while (length(search) < shingleSize)
                     fprintf("String must have at least %d characters\n", shingleSize);
-                    search = input("Insert a string: ","s");
+                    search = lower(input("Insert a string: ","s"));
                 end
 
                 searchTitle(search, matrixMinHash, numHash, titles, shingleSize)
             case 5
                 genres = input("Select one or more genres (separated by ','):","s");
                 values = strsplit(genres, ',');
+
             case 6
                 return
+                
             otherwise
                  fprintf("Invalid Option\n");
         end
@@ -153,5 +157,20 @@ function searchTitle(search, matrixMinHashTitles, numHash, titles, shingleSize)
     
     for h = 1 : k
         fprintf('%s - Distância: %.3f\n', similarTitles{index(h)}, distances(h));
+    end
+end
+
+function [similarTitles,distancesTitles,k] = filterSimilar(threshold,titles,matrixMinHashTitles,minHash_search,numHash)
+    similarTitles = {};
+    distancesTitles = {};
+    numTitles = length(titles);
+    k=0;
+    for n = 1 : numTitles
+        distancia = 1 - (sum(minHash_search(1, :) == matrixMinHashTitles(n,:)) / numHash);
+        if (distancia < threshold)
+            k = k+1;
+            similarTitles{k} = titles{n};
+            distancesTitles{k} = distancia;
+        end
     end
 end

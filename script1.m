@@ -1,7 +1,9 @@
 clear;
 clc;
+
 k=6;
 movies = readcell('movies.csv', 'Delimiter', ',');
+movies = movies(1:1000, :);
 
 %==========================Option 1==========================
 genres = getGenres(movies);
