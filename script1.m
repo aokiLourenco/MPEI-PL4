@@ -23,16 +23,16 @@ end
 %==============================================================
 
 %==========================Option 4============================
-titles = movies(:, 1);
+titles = movies(:,1);
 numTitles = length(titles);
 numHash = 100;
-shingleSize = 3;
-matrixMinHashTitles = minHashTitles(titles, numHash, shingleSize);
-distancesTitles = getDistancesMinHashTitles(numTitles, matrixMinHashTitles, numHash);
+shingleSize = 3; 
+matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize);
+distancesTitles = getDistancesMinHashTitles(numTitles,matrizMinHashTitles,numHash);
 %==============================================================
 
 %==========================Save in data========================
-save data.mat genres BF BF_years years matrixMinHashTitles numHash titles distancesTitles chave
+save data.mat genres BF BF_years years
 %==============================================================
 
 
@@ -108,32 +108,32 @@ end
 
 %==========================MinHash==========================
 
-function matrixMinHashTitles = minHashTitles(titles, numHash, shingleSize)
+function matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize)
     numTitles = length(titles);
-    matrixMinHashTitles = inf(numTitles, numHash);
+    matrizMinHashTitles = inf(numTitles, numHash);
     
-    x = waitbar(0, 'MinHash Titles');
-    for k = 1:numTitles
-        waitbar(k/numTitles, x);
+    x = waitbar(0,'A calcular minHashTitles()...');
+    for k= 1 : numTitles
+        waitbar(k/numTitles,x);
         movie = titles{k};
-        for j = 1:(length(movie) - shingleSize + 1)
-            shingle = lower(char(movie(j:(j + shingleSize - 1))));
+        for j = 1 : (length(movie) - shingleSize + 1)
+            shingle = lower(char(movie(j:(j+shingleSize-1)))); 
             h = zeros(1, numHash);
-            for i = 1:numHash
+            for i = 1 : numHash
                 shingle = [shingle num2str(i)];
                 h(i) = DJB31MA(shingle, 127);
             end
-        matrixMinHashTitles(k, :) = min([matrixMinHashTitles(k, :), h]);
+        matrizMinHashTitles(k, :) = min([matrizMinHashTitles(k, :); h]);
         end
     end
     delete(x);
 end
 
-function distances = getDistancesMinHashTitles(numTitles, matrixMinHash, numHash)
+function distances = getDistancesMinHashTitles(numTitles,matrizMinHash,numHash) 
     distances = zeros(numTitles,numTitles);
     for n1= 1:numTitles
         for n2= n1+1:numTitles
-            distances(n1,n2) = sum(matrixMinHash(n1,:)==matrixMinHash(n2,:))/numHash;
+            distances(n1,n2) = sum(matrizMinHash(n1,:)==matrizMinHash(n2,:))/numHash;
         end
     end
 end
