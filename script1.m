@@ -1,13 +1,16 @@
 clear;
 clc;
-k=6;
+
 movies = readcell('movies.csv', 'Delimiter', ',');
 movies = movies(1:1000, :);
+numFilms = height(movies);
+k=6;
 
 %==========================Option 1===========================
 genres = getGenres(movies);
 years = getYear(movies);
 %=============================================================
+
 
 %==========================Option 2 & 3=======================
 BF = init(length(genres)*8);
@@ -22,6 +25,7 @@ for i = 1:height(movies)
 end
 %==============================================================
 
+
 %==========================Option 4============================
 titles = movies(:,1);
 numTitles = length(titles);
@@ -31,13 +35,23 @@ matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize);
 distancesTitles = getDistancesMinHashTitles(numTitles,matrizMinHashTitles,numHash);
 %==============================================================
 
+
+%==========================Option 5============================
+numHash = 100; 
+genres = getGenres(movies);
+numGenres = length(genres);
+matrizAssGenres = matrizAss(movies,genres);
+matrizMinHashGenres = minHash(matrizAssGenres,numHash);
+distancesGenres = getDistancesMinHashGenres(numFilms,matrizMinHashGenres,numHash);
+%==============================================================
+
+
 %==========================Save in data========================
-save data.mat genres BF BF_years years
+save data.mat genres BF BF_years years matrizMinHashGenres distancesGenres matrizMinHashTitles distancesTitles
 %==============================================================
 
 
 %==========================Get Things==========================
-
 function genres = getGenres(movies)
     genres = {};
     k = 1;
@@ -71,7 +85,6 @@ function BF = init(n)
     BF = zeros(1,n);
 end
 
-
 function BF = insert(elemento, BF, k)
     n = length(BF);
         for i = 1:k
@@ -96,7 +109,6 @@ function BF = insert2(elemento, BF, k, ano)
         end
 end
 
-    
 function h= DJB31MA( chave, seed)
     len= length(chave);
     chave= double(chave);
@@ -105,14 +117,15 @@ function h= DJB31MA( chave, seed)
         h = mod(31 * h + chave(i), 2^32 -1) ;
     end
 end
+%================================================================
+
 
 %==========================MinHash==========================
-
 function matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize)
     numTitles = length(titles);
     matrizMinHashTitles = inf(numTitles, numHash);
     
-    x = waitbar(0,'A calcular minHashTitles()...');
+    x = waitbar(0,'MinHash Titles');
     for k= 1 : numTitles
         waitbar(k/numTitles,x);
         movie = titles{k};
@@ -134,6 +147,46 @@ function distances = getDistancesMinHashTitles(numTitles,matrizMinHash,numHash)
     for n1= 1:numTitles
         for n2= n1+1:numTitles
             distances(n1,n2) = sum(matrizMinHash(n1,:)==matrizMinHash(n2,:))/numHash;
+        end
+    end
+end
+
+function matrizAss = matrizAss(dic,genres)
+    numFilms = height(dic);
+    numGenres = length(genres);
+    matrizAss = zeros(numGenres,height(dic));
+
+    for i= 1:numGenres
+        for n= 1:numFilms
+            for k= 2:7
+                if ~anymissing(dic{n,k})
+                    if strcmp(genres(i),dic{n,k})
+                        matrizAss(i,n) = 1;
+                    end
+                end
+            end
+        end
+    end
+end
+
+function matrizMinHashGenres = minHash(matrizAss,numHashFunc)
+    p = primes(10000);
+    matrizMinHashGenres = zeros(numHashFunc,width(matrizAss));
+    kList = p(randperm(length(p),numHashFunc));
+
+    for func= 1:length(kList)
+        for d= 1:width(matrizAss)
+            matrizMinHashGenres(func,d) = min(mod(find(matrizAss(:,d)==1),kList(func)));
+        end
+    end
+
+end
+
+function distances = getDistancesMinHashGenres(numFilms,matrizMinHash,numHash) 
+    distances = zeros(numFilms,numFilms);
+    for n1= 1:numFilms
+        for n2= n1+1:numFilms
+            distances(n1,n2) = sum(matrizMinHash(:,n1)==matrizMinHash(:,n2))/numHash;
         end
     end
 end

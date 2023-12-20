@@ -38,7 +38,6 @@ while(1)
                 fprintf("\nGenre doesn't exist. Press 1 to see available genres.\n")
             end
             
-
         case 3
             genre_year = input("Select a genre and a year (separated by ','): ","s");
             values = strsplit(genre_year, ',');
@@ -66,8 +65,6 @@ while(1)
                 fprintf("Invalid Inputs\n")
             end
 
-
-
         case 4
             search = lower(input("Insert a string: ","s"));
             fprintf('\n');
@@ -78,9 +75,22 @@ while(1)
             end
 
             searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize, genres)
+
         case 5
-            genres = input("Select one or more genres (separated by ','):","s");
-            values = strsplit(genres, ',');
+            selectedGenres = input("Select one or more genres (separated by ','): ","s");
+            values = strsplit(selectedGenres, ',');
+
+            isValid = all(arrayfun(@(genre) checkBloomFilter(genre, genreBloomFilter), values));
+
+            if isValid
+                [sortedMovies, sortedIndices] = calculateAndSortSimilarity(values, movies, genreSignatureMatrix);
+                
+                for i = 1:min(5, length(sortedMovies))
+                    fprintf('%s - Year: %d - Similarity: %f', sortedMovies{i}, movies{sortedIndices(i), 2}, sortedMovies{i}.similarity);
+                end
+            else
+                disp('One or more genres entered are not valid.');
+            end            
 
         case 6
             return
@@ -89,10 +99,9 @@ while(1)
                 fprintf("Invalid Option\n");
     end
 end
-%end
+
 
 %==========================Auxiliar Funcs==========================
-
 function check = valid(elemento, BF, k)
     n = length(BF);
     for i = 1:k
@@ -146,10 +155,7 @@ function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize, 
     [distances, index] = sort(distances);
     
     for h = 1 : k
-        fprintf('%s - Similarity: %.3f\n', similarTitles{index(h)}, distances(h));
-        for i = 1:length(genres)
-            fprintf('%s, ', genres{i});
-        end
+        fprintf('%s - Similarity: %.3f\n%s', similarTitles{index(h)}, distances(h));
         fprintf("\n==========================\n\n")
     end
 end
@@ -174,6 +180,22 @@ function [similarTitles,distancesTitles,k] = filterSimilar(threshold,titles,matr
             k = k+1;
             similarTitles{k} = titles{n};
             distancesTitles{k} = distancia;
+        end
+    end
+end
+
+% For each movie, should show the Jaccard similarity between the selected genres and the movie genres
+function [similarGenres, distancesGenres, k] = similar(selectedGenresMinHash, matrizMinHashGenres, genres)
+    similarGenres = {};
+    distancesGenres = {};
+    numGenres = length(genres);
+    k = 0;
+    for n = 1 : numGenres
+        distancia = 1 - (sum(selectedGenresMinHash(1, :) == matrizMinHashGenres(n,:)) / numHash);
+        if (distancia < threshold)
+            k = k+1;
+            similarGenres{k} = genres{n};
+            distancesGenres{k} = distancia;
         end
     end
 end
