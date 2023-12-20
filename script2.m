@@ -67,7 +67,14 @@ function interface(genres,BF,BF_years,years)
 
 
             case 4
-                name = input("Insert a string:","s");
+                search = lower("Insert a string: ","s");
+
+                while (length(search) < shingleSize)
+                    fprintf("String must have at least %d characters\n", shingleSize);
+                    search = input("Insert a string: ","s");
+                end
+
+                searchTitle(search, matrixMinHash, numHash, titles, shingleSize)
             case 5
                 genres = input("Select one or more genres (separated by ','):","s");
                 values = strsplit(genres, ',');
@@ -79,10 +86,7 @@ function interface(genres,BF,BF_years,years)
     end
 end
 
-
-
-
-
+%==========================Auxiliar Funcs==========================
 
 function check = valid(elemento, BF, k)
     n = length(BF);
@@ -120,5 +124,34 @@ function h= DJB31MA( chave, seed)
     h= seed;
     for i=1:len
         h = mod(31 * h + chave(i), 2^32 -1) ;
+    end
+end
+
+function searchTitle(search, matrixMinHashTitles, numHash, titles, shingleSize)
+    minHashSearch = inf(1, numHash);
+    for j = 1 : (length(search) - shingleSize + 1)
+        shingle = char(search(j:(j+shingleSize-1))); 
+        h = zeros(1, numHash);
+        for i = 1 : numHash
+            shingle = [shingle num2str(i)];
+            h(i) = DJB31MA(shingle, 127);
+        end
+        minHashSearch(1, :) = min([minHashSearch(1, :); h]);
+    end
+   
+    threshold = 0.99;
+    [similarTitles,distancesTitles,k] = filterSimilar(threshold,titles,matrixMinHashTitles,minHashSearch,numHash);
+         
+    if (k == 0)
+        disp('No results found');
+    elseif (k > 5)
+        k = 5;
+    end
+    
+    distances = cell2mat(distancesTitles);
+    [distances, index] = sort(distances);
+    
+    for h = 1 : k
+        fprintf('%s - Distância: %.3f\n', similarTitles{index(h)}, distances(h));
     end
 end
