@@ -2,7 +2,6 @@ clear;
 clc;
 
 movies = readcell('movies.csv', 'Delimiter', ',');
-movies = movies(1:1000, :);
 numFilms = height(movies);
 k=6;
 
@@ -32,7 +31,6 @@ numTitles = length(titles);
 numHash = 100;
 shingleSize = 3; 
 matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize);
-[top5Titles, top5Distances] = getTop5SimilarTitles(numTitles, matrizMinHashTitles, numHash, 1);
 %==============================================================
 
 
@@ -42,12 +40,12 @@ genres = getGenres(movies);
 numGenres = length(genres);
 matrizAssGenres = matrizAss(movies,genres);
 matrizMinHashGenres = minHash(matrizAssGenres,numHash);
-distancesGenres = getDistancesMinHashGenres(numFilms,matrizMinHashGenres,numHash);
+% distancesGenres = getDistancesMinHashGenres(numFilms,matrizMinHashGenres,numHash);
 %==============================================================
 
 
 %==========================Save in data========================
-save data.mat genres BF BF_years years matrizMinHashGenres distancesGenres matrizMinHashTitles top5Titles top5Distances
+save data.mat genres BF BF_years years matrizMinHashGenres matrizMinHashTitles 
 %==============================================================
 
 
@@ -57,7 +55,7 @@ function genres = getGenres(movies)
     k = 1;
 
     for i = 1:height(movies)
-        for j = 3:12
+        for j = 3:7
             if ~anymissing(movies{i, j}) && ~strcmp(movies{i, j}, 'unkown')
                 genres{k} = movies{i, j};
                 k = k + 1;
@@ -151,25 +149,25 @@ end
 %     end
 % end
 
-function [top5Titles, top5Distances] = getTop5SimilarTitles(numTitles, matrizMinHash, numHash, searchTitleIndex)
-    top5Distances = zeros(1, 5);
-    top5Titles = zeros(1, 5);
+% function [top5Titles, top5Distances] = getTop5SimilarTitles(numTitles, matrizMinHash, numHash, searchTitleIndex)
+%     top5Distances = zeros(1, 5);
+%     top5Titles = zeros(1, 5);
     
-    for n = 1:numTitles
-        if n == searchTitleIndex
-            continue;
-        end
+%     for n = 1:numTitles
+%         if n == searchTitleIndex
+%             continue;
+%         end
         
-        distance = sum(matrizMinHash(searchTitleIndex,:) == matrizMinHash(n,:)) / numHash;
+%         distance = sum(matrizMinHash(searchTitleIndex,:) == matrizMinHash(n,:)) / numHash;
         
-        if distance > min(top5Distances)
-            [~, minIndex] = min(top5Distances);
+%         if distance > min(top5Distances)
+%             [~, minIndex] = min(top5Distances);
             
-            top5Distances(minIndex) = distance;
-            top5Titles(minIndex) = n;
-        end
-    end
-end
+%             top5Distances(minIndex) = distance;
+%             top5Titles(minIndex) = n;
+%         end
+%     end
+% end
 %================================================================
 
 

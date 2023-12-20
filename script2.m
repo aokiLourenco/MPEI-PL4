@@ -186,18 +186,3 @@ function [similarTitles,distancesTitles,k] = filterSimilar(threshold,titles,matr
     end
 end
 
-% For each movie, should show the Jaccard similarity between the selected genres and the movie genres
-function [similarGenres, distancesGenres, k] = similar(selectedGenresMinHash, matrizMinHashGenres, genres)
-    similarGenres = {};
-    distancesGenres = {};
-    numGenres = length(genres);
-    k = 0;
-    for n = 1 : numGenres
-        distancia = 1 - (sum(selectedGenresMinHash(1, :) == matrizMinHashGenres(n,:)) / numHash);
-        if (distancia < threshold)
-            k = k+1;
-            similarGenres{k} = genres{n};
-            distancesGenres{k} = distancia;
-        end
-    end
-end
