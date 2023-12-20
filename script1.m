@@ -1,6 +1,5 @@
 clear;
 clc;
-
 k=6;
 movies = readcell('movies.csv', 'Delimiter', ',');
 movies = movies(1:1000, :);
@@ -57,16 +56,6 @@ function genres = getGenres(movies)
 
     genres = unique(genres);
 end
-
-% function titles = getTitles(movies)
-%     titles = {};
-%     k = 1;
-
-%     for i = 1:height(movies)
-%         titles{k} = movies{i, 1};
-%         k = k + 1;
-%     end
-% end
 
 function year = getYear(movies)
     k = 1;
