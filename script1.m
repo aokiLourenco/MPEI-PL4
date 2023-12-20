@@ -28,11 +28,11 @@ numTitles = length(titles);
 numHash = 100;
 shingleSize = 3;
 matrixMinHashTitles = minHashTitles(titles, numHash, shingleSize);
-distanceTitles = getDistancesMinHashTitles(numTitles, matrixMinHashTitles, numHash);
+distancesTitles = getDistancesMinHashTitles(numTitles, matrixMinHashTitles, numHash);
 %==============================================================
 
 %==========================Save in data========================
-save data.mat genres BF BF_years years
+save data.mat genres BF BF_years years matrixMinHashTitles numHash titles distancesTitles chave
 %==============================================================
 
 

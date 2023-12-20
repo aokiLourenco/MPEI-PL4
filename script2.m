@@ -1,11 +1,11 @@
 %% MAIN
 load data.mat
-interface(genres,BF,BF_years,years);
-
-clc;
+interface(genres,BF,BF_years,years,matrixMinHashTitles,numHash,titles,shingleSize);
+searchTitle(matrixMinHashTitles, numHash, titles, shingleSize)
+filterSimilar(titles,matrixMinHashTitles,minHash_search,numHash)
 
 %% INTERFACE
-function interface(genres,BF,BF_years,years)
+function interface(genres,BF,BF_years,years,matrixMinHashTitles,numHash,titles,shingleSize)
     while(1)
         option = input(['\n1 - Display available genres' ...
                         '\n2 - Number of movies of a genre' ...
@@ -71,12 +71,15 @@ function interface(genres,BF,BF_years,years)
             case 4
                 search = lower(input("Insert a string: ","s"));
 
+                numHash = 100;
+                shingleSize = 3;
+
                 while (length(search) < shingleSize)
                     fprintf("String must have at least %d characters\n", shingleSize);
                     search = lower(input("Insert a string: ","s"));
                 end
 
-                searchTitle(search, matrixMinHash, numHash, titles, shingleSize)
+                searchTitle(search, matrixMinHashTitles, numHash, titles, shingleSize)
             case 5
                 genres = input("Select one or more genres (separated by ','):","s");
                 values = strsplit(genres, ',');
@@ -120,17 +123,6 @@ function check = valid2(elemento, ano, BF, k)
     end
 end
 
-
-    
-function h= DJB31MA( chave, seed)
-    len= length(chave);
-    chave= double(chave);
-    h= seed;
-    for i=1:len
-        h = mod(31 * h + chave(i), 2^32 -1) ;
-    end
-end
-
 function searchTitle(search, matrixMinHashTitles, numHash, titles, shingleSize)
     minHashSearch = inf(1, numHash);
     for j = 1 : (length(search) - shingleSize + 1)
@@ -160,12 +152,22 @@ function searchTitle(search, matrixMinHashTitles, numHash, titles, shingleSize)
     end
 end
 
+function h= DJB31MA(chave, seed)
+    len= length(chave);
+    chave= double(chave);
+    h= seed;
+    for i=1:len
+        h = mod(31 * h + chave(i), 2^32 -1) ;
+    end
+end
+
 function [similarTitles,distancesTitles,k] = filterSimilar(threshold,titles,matrixMinHashTitles,minHash_search,numHash)
     similarTitles = {};
     distancesTitles = {};
     numTitles = length(titles);
     k=0;
     for n = 1 : numTitles
+        % fprintf("%s", matrixMinHashTitles)
         distancia = 1 - (sum(minHash_search(1, :) == matrixMinHashTitles(n,:)) / numHash);
         if (distancia < threshold)
             k = k+1;
