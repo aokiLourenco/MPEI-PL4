@@ -70,13 +70,14 @@ while(1)
 
         case 4
             search = lower(input("Insert a string: ","s"));
+            fprintf('\n');
 
             while (length(search) < shingleSize)
                 fprintf("String must have at least %d characters\n", shingleSize);
                 search = lower(input("Insert a string: ","s"));
             end
 
-            searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
+            searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize, genres)
         case 5
             genres = input("Select one or more genres (separated by ','):","s");
             values = strsplit(genres, ',');
@@ -120,7 +121,7 @@ function check = valid2(elemento, ano, BF, k)
     end
 end
 
-function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
+function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize, genres)
     minHashSearch = inf(1, numHash);
     for j = 1 : (length(search) - shingleSize + 1)
         shingle = char(search(j:(j+shingleSize-1))); 
@@ -145,7 +146,11 @@ function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
     [distances, index] = sort(distances);
     
     for h = 1 : k
-        fprintf('%s - Distância: %.3f\n', similarTitles{index(h)}, distances(h));
+        fprintf('%s - Similarity: %.3f\n', similarTitles{index(h)}, distances(h));
+        for i = 1:length(genres)
+            fprintf('%s, ', genres{i});
+        end
+        fprintf("\n==========================\n\n")
     end
 end
 
