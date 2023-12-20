@@ -23,7 +23,7 @@ while(1)
             end
 
         case 2
-            genre = input("Select a genre:","s");
+            genre = input("Select a genre: ","s");
             a=0;
             for x = 1:length(genres)
                 if strcmp(genre, genres{x})
@@ -40,7 +40,7 @@ while(1)
             
 
         case 3
-            genre_year = input("Select a genre and a year (separated by ','):","s");
+            genre_year = input("Select a genre and a year (separated by ','): ","s");
             values = strsplit(genre_year, ',');
             a=0;
             b=0;
