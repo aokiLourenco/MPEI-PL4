@@ -155,7 +155,7 @@ function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
     [distances, index] = sort(distances);
     
     for h = 1 : k
-        fprintf('%s - Distância: %.3f\n', similarTitles{index(h)}, distances(h));
+        fprintf('%s - Similarity: %.3f\n', similarTitles{index(h)}, 1-distances(h));
     end
 end
 

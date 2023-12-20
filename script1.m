@@ -2,7 +2,6 @@ clear;
 clc;
 
 movies = readcell('movies.csv', 'Delimiter', ',');
-numFilms = height(movies);
 k=6;
 
 %==========================Option 1===========================
@@ -35,8 +34,7 @@ matrizMinHashTitles = minHashTitles(titles,numHash,shingleSize);
 
 
 %==========================Option 5============================
-numHash = 100; 
-genres = getGenres(movies);
+numFilms = height(movies);
 numGenres = length(genres);
 matrizAssGenres = matrizAss(movies,genres);
 matrizMinHashGenres = minHash(matrizAssGenres,numHash);
@@ -45,7 +43,7 @@ matrizMinHashGenres = minHash(matrizAssGenres,numHash);
 
 
 %==========================Save in data========================
-save data.mat genres BF BF_years years matrizMinHashGenres matrizMinHashTitles numHash shingleSize titles
+save data.mat genres BF BF_years years matrizMinHashGenres matrizMinHashTitles numHash shingleSize titles numFilms numGenres numTitles
 %==============================================================
 
 
