@@ -45,7 +45,7 @@ matrizMinHashGenres = minHash(matrizAssGenres,numHash);
 
 
 %==========================Save in data========================
-save data.mat genres BF BF_years years matrizMinHashGenres matrizMinHashTitles 
+save data.mat genres BF BF_years years matrizMinHashGenres matrizMinHashTitles numHash shingleSize titles
 %==============================================================
 
 

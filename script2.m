@@ -74,7 +74,7 @@ while(1)
                 search = lower(input("Insert a string: ","s"));
             end
 
-            searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize, genres)
+            searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
 
         case 5
             selectedGenres = input("Select one or more genres (separated by ','): ","s");
@@ -130,7 +130,7 @@ function check = valid2(elemento, ano, BF, k)
     end
 end
 
-function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize, genres)
+function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize)
     minHashSearch = inf(1, numHash);
     for j = 1 : (length(search) - shingleSize + 1)
         shingle = char(search(j:(j+shingleSize-1))); 
@@ -153,12 +153,9 @@ function searchTitle(search, matrizMinHashTitles, numHash, titles, shingleSize, 
     
     distances = cell2mat(distancesTitles);
     [distances, index] = sort(distances);
-
-    % for each movie appear the genres of it
+    
     for h = 1 : k
-        fprintf('%s - Similarity: %.3f\n%s', similarTitles{index(h)}, distances(h), genres{index(h)});
-        fprintf("\n==========================\n\n")
-
+        fprintf('%s - Distância: %.3f\n', similarTitles{index(h)}, distances(h));
     end
 end
 
@@ -185,4 +182,3 @@ function [similarTitles,distancesTitles,k] = filterSimilar(threshold,titles,matr
         end
     end
 end
-
