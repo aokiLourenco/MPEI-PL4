@@ -1,12 +1,7 @@
 %% MAIN
 load data.mat
-movies = readcell('movies.csv', 'Delimiter', ',');
-%interface(genres,BF,BF_years,years,matrixMinHashTitles,numHash,titles,shingleSize);
-%searchTitle(matrixMinHashTitles, numHash, titles, shingleSize)
-%filterSimilar(titles,matrixMinHashTitles,minHash_search,numHash)
 
 %% INTERFACE
-%function interface(genres,BF,BF_years,years,matrixMinHashTitles,numHash,titles,shingleSize)
 while(1)
     option = input(['\n1 - Display available genres' ...
                     '\n2 - Number of movies of a genre' ...
@@ -101,9 +96,7 @@ while(1)
                 %%%%%%%%%%%%%%%%%%%%%%%%%%
                 %Código para opção 5 aqui%
                 %%%%%%%%%%%%%%%%%%%%%%%%%%
-                searchGenre(values, matrizMinHashGenres, numHash, genres, years, shingleSize,movies)
-
-                return
+                searchGenre(values, matrizMinHashGenres, numHash, movies(:,3:12), years,movies)
 
             else
                 fprintf("Invalid Genres, press 1 to see available genres.\n")
@@ -219,6 +212,54 @@ function genres = movie_genres (index,movies)
     for j = 3:12
         if ~ismissing(movies{index,j})
             genres{j-2}=movies{index,j}; 
+        end
+    end
+end
+
+
+%==========opção5===========
+
+
+function searchGenre(values, matrizMinHashGenres, numHash, genres, years,movies)
+    minHashSearch = inf(1, numHash);
+    shingle="";
+    for j = 1 : (length(values))
+        shingle = [shingle values{j}];
+        h = zeros(1, numHash);
+        for i = 1 : numHash
+            shingle = [shingle num2str(i)];
+            h(i) = DJB31MA(shingle, 127);
+        end
+        minHashSearch(1, :) = min([minHashSearch(1, :); h]);
+    end
+    threshold = 0.99;
+    [similarGenres,distancesTitles,k] = filterSimilar2(threshold,values,matrizMinHashGenres,minHashSearch,numHash,genres);
+         
+    if (k == 0)
+        disp('No results found');
+    elseif (k > 5)
+        k = 5;
+    end
+    
+    distances = cell2mat(distancesTitles);
+    [distances, index] = sort(distances);
+    
+    for h = 1 : k
+        fprintf('\n%s - Similarity: %.3f\n', similarGenres{index(h)}, 1-distances(h));
+    end
+end
+
+function [similarGenres,distancesTitles,k] = filterSimilar2(threshold,values,matrizMinHashGenres,minHashSearch,numHash,genres)
+    similarGenres = {};
+    distancesTitles = {};
+    numGenres = length(values);
+    k=0;
+    for n = 1 : numGenres
+        distancia = 1 - (sum(minHashSearch(1, :) == matrizMinHashGenres(n,:)) / numHash);
+        if (distancia < threshold)
+            k = k+1;
+            similarGenres{k} = genres{n};
+            distancesTitles{k} = distancia;
         end
     end
 end
