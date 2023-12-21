@@ -80,18 +80,34 @@ while(1)
         case 5
             selectedGenres = input("Select one or more genres (separated by ','): ","s");
             values = strsplit(selectedGenres, ',');
+            for y = 1:length(values) 
+                 for x = 1:length(genres) 
+                    if strcmp(values{y}, genres{x})
+                        a(y)=1;
+                        break
+                    else
+                        a(y)=0;
+                    end
+                 end
+            end
 
-            isValid = all(arrayfun(@(genre) checkBloomFilter(genre, genreBloomFilter), values));
-
-            if isValid
-                [sortedMovies, sortedIndices] = calculateAndSortSimilarity(values, movies, genreSignatureMatrix);
-                
-                for i = 1:min(5, length(sortedMovies))
-                    fprintf('%s - Year: %d - Similarity: %f', sortedMovies{i}, movies{sortedIndices(i), 2}, sortedMovies{i}.similarity);
+            if min(a)==1
+                fprintf("Genres selected: ");
+                for y = 1 : length(values)
+                    fprintf("%s ", values{y});
                 end
+                fprintf("\n");
+
+                %%%%%%%%%%%%%%%%%%%%%%%%%%
+                %Código para opção 5 aqui%
+                %%%%%%%%%%%%%%%%%%%%%%%%%%
+                searchGenre(values, matrizMinHashGenres, numHash, genres, years, shingleSize,movies)
+
+                return
+
             else
-                disp('One or more genres entered are not valid.');
-            end            
+                fprintf("Invalid Genres, press 1 to see available genres.\n")
+            end
 
         case 6
             return
